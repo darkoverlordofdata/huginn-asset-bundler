@@ -1,9 +1,9 @@
 {
-  "name": "hugin-asset-bundler",
+  "name": "huginn-asset-bundler",
   "version": "0.0.1",
-  "description": "Hugin plugin asset bundler",
+  "description": "Huginn plugin asset bundler",
   "keywords": [
-    "hugin",
+    "huginn",
     "static blog",
     "coffee-script"
   ],
@@ -24,7 +24,7 @@
   "bin": {
   },
   "devDependencies": {},
-  "repository": "git://github.com/darkoverlordofdata/hugin-asset-bundler",
+  "repository": "git://github.com/darkoverlordofdata/huginn-asset-bundler",
   "main": "index",
   "engines": {
     "node": ">=0.10.x",
