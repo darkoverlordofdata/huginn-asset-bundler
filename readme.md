@@ -1,4 +1,4 @@
-# Hugin Plugin Asset Manager
+# Hugin Asset Manager Plugin
 
 pronounced "HOO-gin"
 
@@ -11,17 +11,16 @@ Static Page generator
 ### Install
 
 ```bash
-$ sudo npm install hugin -g
+$ npm install hugin-asset-bundler --save
 ```
 
+Add to confg.yml
 
-### Create a new application
 
-```bash
-$ hugin create <appname>
-$ cd <appname>
-$ hugin build
-$ hugin serve
+```yml
+plugins:
+  - hugin-asset-bundler
+  - hugin-tag-cloud
 ```
 
 ## License
