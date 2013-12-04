@@ -1,0 +1,34 @@
+{
+  "name": "hugin-asset-bundler",
+  "version": "0.0.1",
+  "description": "Hugin plugin asset bundler",
+  "keywords": [
+    "hugin",
+    "static blog",
+    "coffee-script"
+  ],
+  "author": "bruce davidson <brucedavidson@darkoverlordofdata.com>",
+  "contributors": [
+    {
+      "name": "bruce davidson",
+      "email": "brucedavidson@darkoverlordofdata.com"
+    }
+  ],
+  "dependencies": {
+    "yaml-js": "0.0.8",
+    "jsmin": "~1.0.1",
+    "cssmin": "~0.4.1"
+  },
+  "scripts": {
+  },
+  "bin": {
+  },
+  "devDependencies": {},
+  "repository": "git://github.com/darkoverlordofdata/hugin-asset-bundler",
+  "main": "index",
+  "engines": {
+    "node": ">=0.10.x",
+    "npm": ">=1.x.x"
+  },
+  "license": "MIT"
+}
