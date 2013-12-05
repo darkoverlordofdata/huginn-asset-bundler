@@ -25,7 +25,7 @@ _js       = ''
 _css      = ''
 _cdn      = ''
 _url      = ''
-_shim     = ''
+_prj      = ''
 _dev      = false
 _src      = ''
 _dst      = ''
@@ -48,7 +48,7 @@ module.exports =
     _css      = $site.asset_bundler.markup_templates.css
     _cdn      = $site.asset_bundler.server_url
     _url      = $site.asset_bundler.base_path
-    _shim     = $site.asset_bundler.shim
+    _prj      = $site.asset_bundler.shim
     _dev      = $site.asset_bundler.dev
     _src      = $site.source
     _dst      = $site.destination
@@ -72,12 +72,12 @@ module.exports =
           if /.js$/.test $asset
             $url = $asset.replace(/^\/_assets\//, _url)
             _copy_asset $asset, $url
-            $s+= _js.replace("{{url}}", _shim+$url)
+            $s+= _js.replace("{{url}}", _prj+$url)
 
           else if /.css$/.test $asset
             $url = $asset.replace(/^\/_assets\//, _url)
             _copy_asset $asset, $url
-            $s+=_css.replace("{{url}}", _shim+$url)
+            $s+=_css.replace("{{url}}", _prj+$url)
 
         $assets = $assets.replace(_bundler, "\"#{$s.replace(/\n/g, "\\n")}\"")
 
@@ -97,12 +97,12 @@ module.exports =
         if $js.length
           $url_js = "assets/#{md5($js)}.js"
           fs.writeFileSync "#{_dst}/#{$url_js}", $js
-          $s+= _js.replace("{{url}}", "#{_shim}/#{$url_js}")
+          $s+= _js.replace("{{url}}", "#{_prj}/#{$url_js}")
 
         if $css.length
           $url_css = "assets/#{md5($css)}.css"
           fs.writeFileSync "#{_dst}/#{$url_css}", $css
-          $s+= _css.replace("{{url}}", "#{_shim}/#{$url_css}")
+          $s+= _css.replace("{{url}}", "#{_prj}/#{$url_css}")
 
         $assets = $assets.replace(_bundler, "\"#{$s.replace(/\n/g, "\\n")}\"")
 
