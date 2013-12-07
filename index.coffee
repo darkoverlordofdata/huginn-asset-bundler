@@ -1,5 +1,5 @@
 #+--------------------------------------------------------------------+
-#| asset_bundler.coffee
+#| bundle.coffee
 #+--------------------------------------------------------------------+
 #| Copyright DarkOverlordOfData (c) 2013
 #+--------------------------------------------------------------------+
@@ -13,6 +13,7 @@
 #
 # asset bundler huginn-plugin
 #
+
 fs = require('fs')
 path = require('path')
 yaml = require('yaml-js')
@@ -20,51 +21,39 @@ crypto = require('crypto')
 jsmin = require('jsmin').jsmin
 cssmin = require('cssmin')
 
-_bundler  = /\"([^\"]*)\"/
-_js       = ''
-_css      = ''
-_cdn      = ''
-_url      = ''
-_prj      = ''
-_dev      = false
-_src      = ''
-_dst      = ''
-_min_js   = false
-_min_css  = false
+#
+# Connect to the site
+# cache the configuration values
+#
+module.exports = (Liquid, site) ->
+
+  _js       = site.asset_bundler.markup_templates.js
+  _css      = site.asset_bundler.markup_templates.css
+  _cdn      = site.asset_bundler.server_url
+  _url      = site.asset_bundler.base_path
+  _prj      = site.asset_bundler.shim
+  _dev      = site.asset_bundler.dev
+  _src      = site.source
+  _dst      = site.destination
+  _min_js   = site.asset_bundler.compress.js
+  _min_css  = site.asset_bundler.compress.css
+
+  class Bundle extends Liquid.Block
+
+    constructor: ($name, $markup, $tokens) ->
+      super
+
+    render: ($ctx) ->
+      $assets = super
+      @build $assets[0]
+
+    #
+    # build the tag content
+    #
+    build: ($assets) ->
 
 
-module.exports =
-
-  tag: 'bundle'   # {% bundle %}
-  ends: true      # {% endbundle %}
-
-  #
-  # Connect to the site
-  # cache some configuration values
-  #
-  connect: ($site) ->
-
-    _js       = $site.asset_bundler.markup_templates.js
-    _css      = $site.asset_bundler.markup_templates.css
-    _cdn      = $site.asset_bundler.server_url
-    _url      = $site.asset_bundler.base_path
-    _prj      = $site.asset_bundler.shim
-    _dev      = $site.asset_bundler.dev
-    _src      = $site.source
-    _dst      = $site.destination
-    _min_js   = $site.asset_bundler.compress.js
-    _min_css  = $site.asset_bundler.compress.css
-
-  #
-  # build the tag content
-  #
-  compile: (compiler, args, content, parents, options, blockName) ->
-
-    $assets = compiler(content, parents, options, blockName)
-
-    if ($match = $assets.match(_bundler))?
-
-      $bundle = yaml.load($match[1].replace(/\\n/g, "\n"))
+      $bundle = yaml.load($assets)
       if _dev # Just create tags for each asset file
 
         $s = ''
@@ -79,7 +68,7 @@ module.exports =
             _copy_asset $asset, $url
             $s+=_css.replace("{{url}}", _prj+$url)
 
-        $assets = $assets.replace(_bundler, "\"#{$s.replace(/\n/g, "\\n")}\"")
+        $assets = $s
 
       else
 
@@ -95,46 +84,43 @@ module.exports =
 
         $s = ''
         if $js.length
-          $url_js = "assets/#{md5($js)}.js"
+          $url_js = "assets/#{_md5($js)}.js"
           fs.writeFileSync "#{_dst}/#{$url_js}", $js
           $s+= _js.replace("{{url}}", "#{_prj}/#{$url_js}")
 
         if $css.length
-          $url_css = "assets/#{md5($css)}.css"
+          $url_css = "assets/#{_md5($css)}.css"
           fs.writeFileSync "#{_dst}/#{$url_css}", $css
           $s+= _css.replace("{{url}}", "#{_prj}/#{$url_css}")
 
-        $assets = $assets.replace(_bundler, "\"#{$s.replace(/\n/g, "\\n")}\"")
+        $assets = $s
 
-    return $assets
-
-  #
-  # build the tag
-  #
-  parse: (str, line, parser, types, stack, opts) ->
-    return true;
+      return $assets
 
 
-#
-# Copy an asset
-#
-# @param  [String]  from  source asset
-# @param  [String]  to    destination asset
-# @return none
-#
-_copy_asset = ($from, $to) ->
-  $src = path.resolve("#{_src}/#{$from}")
-  $dst = path.resolve("#{_dst}/#{$to}")
+    #
+    # Copy an asset
+    #
+    # @param  [String]  from  source asset
+    # @param  [String]  to    destination asset
+    # @return none
+    #
+    _copy_asset = ($from, $to) ->
+      $src = path.resolve("#{_src}/#{$from}")
+      $dst = path.resolve("#{_dst}/#{$to}")
 
-  fs.writeFileSync $dst, String(fs.readFileSync($src))
+      fs.writeFileSync $dst, String(fs.readFileSync($src))
 
 
-#
-# Compute an MD5 hash
-#
-# @param  [String]  str   string to hash
-# @param  [String]  encoding  output type = bin|hex|base64
-# @return none
-#
-md5 = ($str, $encoding='hex') ->
-  crypto.createHash('md5').update($str).digest($encoding)
+    #
+    # Compute an MD5 hash
+    #
+    # @param  [String]  str   string to hash
+    # @param  [String]  encoding  output type = bin|hex|base64
+    # @return none
+    #
+    _md5 = ($str, $encoding='hex') ->
+      crypto.createHash('md5').update($str).digest($encoding)
+
+  Liquid.Template.registerTag "bundle", Bundle
+
