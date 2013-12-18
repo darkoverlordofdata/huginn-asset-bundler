@@ -20,12 +20,13 @@ yaml = require('yaml-js')
 crypto = require('crypto')
 jsmin = require('jsmin').jsmin
 cssmin = require('cssmin')
+Liquid = require('huginn-liquid')
 
 #
 # Connect to the site
 # cache the configuration values
 #
-module.exports = (Liquid, site) ->
+module.exports = (site) ->
 
   _js       = site.asset_bundler.markup_templates.js
   _css      = site.asset_bundler.markup_templates.css
