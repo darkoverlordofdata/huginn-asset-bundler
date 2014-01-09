@@ -1,6 +1,6 @@
 {
   "name": "huginn-asset-bundler",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "description": "Huginn plugin asset bundler",
   "keywords": [
     "huginn",

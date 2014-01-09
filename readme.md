@@ -11,6 +11,7 @@ Static Page generator
 ### Install
 
 ```bash
+$ cd <project>
 $ npm install huginn-asset-bundler --save
 ```
 
@@ -22,6 +23,11 @@ plugins:
   - huginn-asset-bundler
   - huginn-tag-cloud
 ```
+
+## Versioning
+
+0.0.6 - huginn 0.1.0
+0.0.7 - huginn 0.1.1
 
 ## License
 

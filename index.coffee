@@ -110,7 +110,10 @@ module.exports = (site) ->
       $src = path.resolve("#{_src}/#{$from}")
       $dst = path.resolve("#{_dst}/#{$to}")
 
-      fs.writeFileSync $dst, String(fs.readFileSync($src))
+      try
+        fs.writeFileSync $dst, String(fs.readFileSync($src))
+      catch $e
+        console.log $e
 
 
     #
