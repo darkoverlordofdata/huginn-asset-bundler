@@ -26,8 +26,8 @@ plugins:
 
 ## Versioning
 
-0.0.6 - huginn 0.1.0
-0.0.7 - huginn 0.1.1
+    0.0.6 - huginn 0.1.0
+    0.0.7 - huginn 0.1.1
 
 ## License
 

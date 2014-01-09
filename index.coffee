@@ -38,14 +38,15 @@ module.exports = (site) ->
   _dst      = site.destination
   _min_js   = site.asset_bundler.compress.js
   _min_css  = site.asset_bundler.compress.css
+  _err      = site.show_errors
 
   class Bundle extends Liquid.Block
 
     constructor: ($name, $markup, $tokens) ->
-      super
+      super $name, $markup, $tokens
 
     render: ($ctx) ->
-      $assets = super
+      $assets = super($ctx)
       @build $assets[0]
 
     #
@@ -61,13 +62,13 @@ module.exports = (site) ->
         for $asset in $bundle
           if /.js$/.test $asset
             $url = $asset.replace(/^\/_assets\//, _url)
-            _copy_asset $asset, $url
-            $s+= _js.replace("{{url}}", _prj+$url)
+            $s += _copy_asset $asset, $url
+            $s += _js.replace("{{url}}", _prj+$url)
 
           else if /.css$/.test $asset
             $url = $asset.replace(/^\/_assets\//, _url)
-            _copy_asset $asset, $url
-            $s+=_css.replace("{{url}}", _prj+$url)
+            $s += _copy_asset $asset, $url
+            $s += _css.replace("{{url}}", _prj+$url)
 
         $assets = $s
 
@@ -86,18 +87,34 @@ module.exports = (site) ->
         $s = ''
         if $js.length
           $url_js = "assets/#{_md5($js)}.js"
-          fs.writeFileSync "#{_dst}/#{$url_js}", $js
-          $s+= _js.replace("{{url}}", "#{_prj}/#{$url_js}")
+          $s += _create_asset($url_js, $js)
+          $s += _js.replace("{{url}}", "#{_prj}/#{$url_js}")
 
         if $css.length
           $url_css = "assets/#{_md5($css)}.css"
-          fs.writeFileSync "#{_dst}/#{$url_css}", $css
-          $s+= _css.replace("{{url}}", "#{_prj}/#{$url_css}")
+          $s += _create_asset($url_css, $css)
+          $s += _css.replace("{{url}}", "#{_prj}/#{$url_css}")
 
         $assets = $s
 
       return $assets
 
+
+    #
+    # Create an asset
+    #
+    # @param  [String]  url   asset destination
+    # @param  [String]  content
+    # @return none
+    #
+    _create_asset = ($url, $content) ->
+
+      try
+        fs.writeFileSync "#{_dst}/#{$url}", $content
+        ''
+      catch $e
+        console.log $e
+        if _err then String($e) else ''
 
     #
     # Copy an asset
@@ -112,9 +129,10 @@ module.exports = (site) ->
 
       try
         fs.writeFileSync $dst, String(fs.readFileSync($src))
+        ''
       catch $e
         console.log $e
-
+        if _err then String($e) else ''
 
     #
     # Compute an MD5 hash
