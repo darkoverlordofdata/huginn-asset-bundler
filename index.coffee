@@ -77,7 +77,7 @@ module.exports = (site) ->
         $js = ''
         $css = ''
         for $asset in $bundle
-          $code = String(fs.readFileSync(_src+$asset))
+          $code = site.render(_src+$asset)
           if /.js$/.test $asset
             $js +=  if _min_js then jsmin($code, 3) else $code
 
@@ -128,7 +128,7 @@ module.exports = (site) ->
       $dst = path.resolve("#{_dst}/#{$to}")
 
       try
-        fs.writeFileSync $dst, String(fs.readFileSync($src))
+        fs.writeFileSync $dst, site.render($src)
         ''
       catch $e
         console.log $e
