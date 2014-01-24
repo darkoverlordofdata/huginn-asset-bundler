@@ -47,7 +47,11 @@ module.exports = (site) ->
 
     render: ($ctx) ->
       $assets = super($ctx)
-      @build $assets[0]
+
+      if 'string' is typeof $assets
+        @build $assets
+      else
+        @build $assets[0] # backwards compatible huginn-liquid < 0.0.7
 
     #
     # build the tag content
